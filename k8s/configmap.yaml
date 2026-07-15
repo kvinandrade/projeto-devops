@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pedidos-veloz-config
+  namespace: pedidos-veloz
+data:
+  NODE_ENV: "production"
+  POSTGRES_HOST: "postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "pedidos_veloz"
+  PEDIDOS_URL: "http://pedidos:3001"
+  PAGAMENTOS_URL: "http://pagamentos:3002"
+  ESTOQUE_URL: "http://estoque:3003"
+  LOG_LEVEL: "info"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"

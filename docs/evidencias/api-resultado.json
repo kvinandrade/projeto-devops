@@ -1,0 +1,47 @@
+﻿{
+    "estoque":  {
+                    "items":  [
+                                  {
+                                      "sku":  "SKU-CAMISA-M",
+                                      "nome":  "Camisa Básica M",
+                                      "quantidade":  80,
+                                      "preco":  49.9
+                                  },
+                                  {
+                                      "sku":  "SKU-CAMISA-P",
+                                      "nome":  "Camisa Básica P",
+                                      "quantidade":  50,
+                                      "preco":  49.9
+                                  },
+                                  {
+                                      "sku":  "SKU-MOCHILA",
+                                      "nome":  "Mochila Urban",
+                                      "quantidade":  24,
+                                      "preco":  129.9
+                                  },
+                                  {
+                                      "sku":  "SKU-TENIS-42",
+                                      "nome":  "Tênis Runner 42",
+                                      "quantidade":  30,
+                                      "preco":  199.9
+                                  }
+                              ],
+                    "traceId":  "9108ad9f881f24f1564ca846cdb5c0ec"
+                },
+    "pedido":  {
+                   "id":  "973515d1-e56e-4c4e-b4b8-8ad98f335045",
+                   "status":  "CONFIRMADO",
+                   "valorTotal":  49.9,
+                   "pagamentoId":  "e012413f-a3c7-4e3f-a235-e294036a0a1e",
+                   "traceId":  "9d51c27b59cb184d8ebec7282801bf26"
+               },
+    "health":  {
+                   "status":  "ok",
+                   "service":  "api-gateway",
+                   "upstreams":  {
+                                     "pedidos":  "http://pedidos:3001",
+                                     "estoque":  "http://estoque:3003",
+                                     "pagamentos":  "http://pagamentos:3002"
+                                 }
+               }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pedidos-veloz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma de pedidos em microsserviços — Loja Veloz (Cloud DevOps)",
+  "scripts": {
+    "test": "npm run test --prefix services/api-gateway && npm run test --prefix services/pedidos && npm run test --prefix services/pagamentos && npm run test --prefix services/estoque",
+    "test:all": "npm test",
+    "install:all": "npm install --prefix services/api-gateway && npm install --prefix services/pedidos && npm install --prefix services/pagamentos && npm install --prefix services/estoque"
+  }
+}

@@ -1,0 +1,18 @@
+# Aplicar tudo: kubectl apply -k k8s/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: pedidos-veloz
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - postgres.yaml
+  - estoque.yaml
+  - pagamentos.yaml
+  - pedidos.yaml
+  - api-gateway.yaml
+  - hpa.yaml
+  - network-policy.yaml
+commonLabels:
+  app.kubernetes.io/part-of: pedidos-veloz
+  app.kubernetes.io/managed-by: kustomize

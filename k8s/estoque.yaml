@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estoque
+  namespace: pedidos-veloz
+  labels:
+    app: estoque
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: estoque
+  template:
+    metadata:
+      labels:
+        app: estoque
+        version: "1.0.0"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: estoque
+          image: lojaveloz/estoque:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3003
+          envFrom:
+            - configMapRef:
+                name: pedidos-veloz-config
+            - secretRef:
+                name: pedidos-veloz-secrets
+          env:
+            - name: ESTOQUE_PORT
+              value: "3003"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3003
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: estoque
+  namespace: pedidos-veloz
+spec:
+  selector:
+    app: estoque
+  ports:
+    - port: 3003
+      targetPort: 3003

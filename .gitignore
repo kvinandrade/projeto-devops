@@ -1,0 +1,16 @@
+node_modules/
+.env
+*.log
+dist/
+coverage/
+.DS_Store
+Thumbs.db
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.pem
+.idea/
+.vscode/
+*.local

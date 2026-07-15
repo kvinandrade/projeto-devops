@@ -1,0 +1,102 @@
+﻿
+> pedidos-veloz@1.0.0 test
+> npm run test --prefix services/api-gateway && npm run test --prefix services/pedidos && npm run test --prefix services/pagamentos && npm run test --prefix services/estoque
+
+
+> api-gateway@1.0.0 test
+> node --test test/*.test.js
+
+TAP version 13
+# Subtest: rotas p├║blicas do gateway
+ok 1 - rotas p├║blicas do gateway
+  ---
+  duration_ms: 1.1913
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 117.8219
+
+> pedidos-service@1.0.0 test
+> node --test test/*.test.js
+
+TAP version 13
+# Subtest: valida payload m├¡nimo de pedido
+ok 1 - valida payload m├¡nimo de pedido
+  ---
+  duration_ms: 1.493
+  type: 'test'
+  ...
+# Subtest: status finais conhecidos
+ok 2 - status finais conhecidos
+  ---
+  duration_ms: 0.2329
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 115.9791
+
+> pagamentos-service@1.0.0 test
+> node --test test/*.test.js
+
+TAP version 13
+# Subtest: aprova valores comuns
+ok 1 - aprova valores comuns
+  ---
+  duration_ms: 1.4511
+  type: 'test'
+  ...
+# Subtest: recusa valor com centavos .13
+ok 2 - recusa valor com centavos .13
+  ---
+  duration_ms: 0.221
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 142.6567
+
+> estoque-service@1.0.0 test
+> node --test test/*.test.js
+
+TAP version 13
+# Subtest: pre├ºo de SKU conhecido
+ok 1 - pre├ºo de SKU conhecido
+  ---
+  duration_ms: 0.9969
+  type: 'test'
+  ...
+# Subtest: valida├º├úo de quantidade
+ok 2 - valida├º├úo de quantidade
+  ---
+  duration_ms: 0.1893
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 140.6398

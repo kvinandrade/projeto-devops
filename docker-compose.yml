@@ -1,0 +1,122 @@
+# Pedidos Veloz - ambiente local reproduzível (Loja Veloz)
+# Subir tudo: docker compose up --build
+name: pedidos-veloz
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pv-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pedidos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pedidos_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-pedidos_veloz}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - pedidos-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pedidos} -d ${POSTGRES_DB:-pedidos_veloz}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  estoque:
+    build:
+      context: .
+      dockerfile: services/estoque/Dockerfile
+    image: lojaveloz/estoque:1.0.0
+    container_name: pv-estoque
+    restart: unless-stopped
+    environment:
+      ESTOQUE_PORT: 3003
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-pedidos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pedidos_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-pedidos_veloz}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pedidos-net
+
+  pagamentos:
+    build:
+      context: .
+      dockerfile: services/pagamentos/Dockerfile
+    image: lojaveloz/pagamentos:1.0.0
+    container_name: pv-pagamentos
+    restart: unless-stopped
+    environment:
+      PAGAMENTOS_PORT: 3002
+      PAYMENT_API_KEY: ${PAYMENT_API_KEY:-demo-payment-key}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-pedidos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pedidos_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-pedidos_veloz}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pedidos-net
+
+  pedidos:
+    build:
+      context: .
+      dockerfile: services/pedidos/Dockerfile
+    image: lojaveloz/pedidos:1.0.0
+    container_name: pv-pedidos
+    restart: unless-stopped
+    environment:
+      PEDIDOS_PORT: 3001
+      ESTOQUE_URL: http://estoque:3003
+      PAGAMENTOS_URL: http://pagamentos:3002
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-pedidos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pedidos_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-pedidos_veloz}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      estoque:
+        condition: service_started
+      pagamentos:
+        condition: service_started
+    networks:
+      - pedidos-net
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    image: lojaveloz/api-gateway:1.0.0
+    container_name: pv-gateway
+    restart: unless-stopped
+    ports:
+      - "${GATEWAY_PORT:-8080}:8080"
+    environment:
+      GATEWAY_PORT: 8080
+      PEDIDOS_URL: http://pedidos:3001
+      ESTOQUE_URL: http://estoque:3003
+      PAGAMENTOS_URL: http://pagamentos:3002
+    depends_on:
+      - pedidos
+      - estoque
+      - pagamentos
+    networks:
+      - pedidos-net
+
+networks:
+  pedidos-net:
+    driver: bridge
+    name: pedidos-veloz-net
+
+volumes:
+  pgdata:
+    name: pedidos-veloz-pgdata
